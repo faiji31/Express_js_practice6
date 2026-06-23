@@ -1,7 +1,7 @@
-import express from "express"
+import express, { type Application, type Request, type Response } from "express"
  import {Pool} from "pg"
 import config from "./config"
-const app = express()
+const app:Application = express()
 const port = config.port
 
 // middleware
@@ -36,10 +36,35 @@ const initDB=async()=>{
 }
 initDB()
 
-app.get('/', (req, res) => {
-  res.send('server running successfully!')
+app.get('/', (req:Request, res:Response) => {
+  res.status(200).json({
+    "message":"server is running successfully",
+    "author":"Faiji akbar liam"
+  })
 })
-
+app.post("/api/users",async(req:Request,res:Response)=>{
+  const {name,email,age,password} = req.body
+ 
+    try {
+    const result =await pool.query(`
+    INSERT INTO users(name,email,age,password) VALUES($1,$2,$3,$4)
+    RETURNING *
+    
+    `,[name,email,age,password])
+    res.status(201).json({
+      success:true,
+      message:"user created successfully!",
+      data:result.rows[0]
+    })
+      
+    } catch (error:any) {
+      res.status(500).json({
+        success:false,
+        message:error.message,
+        error:error
+      })
+    }
+})
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
