@@ -26,8 +26,37 @@ const getsingleuserintoDB=async(id:string)=>{
       `,[id])
       return result
 }
+
+
+const updateUserintoDB=async(payload:IUser,id:string)=>{
+    const {name,age,password,is_active}=payload
+     const result = await pool.query(
+      `
+      UPDATE users
+      SET
+        name = COALESCE($1, name),
+        age = COALESCE($2, age),
+        password = COALESCE($3, password),
+        is_active = COALESCE($4, is_active)
+      WHERE id = $5
+      RETURNING *
+      `,
+      [name, age, password, is_active, id]
+    );
+    return result
+}
+
+const deleteUserintoDB=async(id:string)=>{
+    const result = await pool.query(`
+      DELETE FROM users WHERE id=$1
+      
+      `,[id])
+      return result
+}
 export const userService ={
     createUserintoDB,
     getuserintoDB,
-    getsingleuserintoDB
+    getsingleuserintoDB,
+    updateUserintoDB,
+    deleteUserintoDB
 }
