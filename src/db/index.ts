@@ -13,7 +13,7 @@ export const initDB=async()=>{
     name VARCHAR(40)  NOT NULL,
     email VARCHAR(20) UNIQUE  NOT NULL,
     age INT NOT NULL,
-    password VARCHAR(20) NOT NULL,
+    password TEXT NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     create_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
